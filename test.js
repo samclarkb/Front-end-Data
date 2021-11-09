@@ -26,8 +26,11 @@ const yaxis = d3.axisLeft().scale(yscale)
 const g_yaxis = g.append('g').attr('class', 'y axis')
 
 /////////////////////////
+// TODO use animated transtion between filtering changes
 
-d3.json('https://rawgit.com/sgratzl/d3tutorial/master/examples/weather.json').then(json => {
+d3.json(
+	'http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&limit=10&api_key=05064fdc55f8c3320ca9ed2c12ae1fa4&artist?&format=json'
+).then(json => {
 	data = json
 
 	update(data)
@@ -35,18 +38,18 @@ d3.json('https://rawgit.com/sgratzl/d3tutorial/master/examples/weather.json').th
 
 function update(new_data) {
 	//update the scales
-	xscale.domain([0, d3.max(new_data, d => d.temperature)])
-	yscale.domain(new_data.map(d => d.location.city))
+	xscale.domain([0, d3.max(new_data.artists.artist, d => d.playcount)])
+	yscale.domain(new_data.artists.artist.map(d => d.name))
 	//render the axis
-	g_xaxis.transition().call(xaxis)
-	g_yaxis.transition().call(yaxis)
+	g_xaxis.call(xaxis)
+	g_yaxis.call(yaxis)
 
 	// Render the chart with new data
 
 	// DATA JOIN use the key argument for ensurign that the same DOM element is bound to the same data-item
 	const rect = g
 		.selectAll('rect')
-		.data(new_data, d => d.location.city)
+		.data(new_data.artists.artist, d => d.name)
 		.join(
 			// ENTER
 			// new elements
@@ -65,12 +68,11 @@ function update(new_data) {
 
 	// ENTER + UPDATE
 	// both old and new elements
-	rect.transition()
-		.attr('height', yscale.bandwidth())
-		.attr('width', d => xscale(d.temperature))
-		.attr('y', d => yscale(d.location.city))
+	rect.attr('height', yscale.bandwidth())
+		.attr('width', d => xscale(d.playcount))
+		.attr('y', d => yscale(d.name))
 
-	rect.select('title').text(d => d.location.city)
+	rect.select('title').text(d => d.name)
 }
 
 //interactivity
