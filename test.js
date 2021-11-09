@@ -38,6 +38,10 @@ d3.json(
 
 function update(new_data) {
 	//update the scales
+	new_data.artists.artist.sort(function (a, b) {
+		return b.playcount - a.playcount
+	})
+
 	xscale.domain([0, d3.max(new_data.artists.artist, d => +d.playcount)])
 	yscale.domain(new_data.artists.artist.map(d => d.name))
 	//render the axis
@@ -83,7 +87,7 @@ d3.select('#filter-us-only').on('change', function () {
 		// Checkbox was just checked
 
 		// Keep only data element whose country is US
-		const filtered_data = data.filter(d => d.location.country === 'US')
+		const filtered_data = data.filter(d => d.listeners)
 
 		update(filtered_data) // Update the chart with the filtered data
 	} else {

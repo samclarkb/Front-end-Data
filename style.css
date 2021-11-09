@@ -8,6 +8,7 @@ body {
 rect {
 	fill: orange;
 	fill-opacity: 0.8;
+	cursor: pointer;
 }
 rect:hover {
 	fill-opacity: 1;
