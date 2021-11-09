@@ -1,5 +1,5 @@
 const margin = { top: 40, bottom: 10, left: 120, right: 20 }
-const width = 800 - margin.left - margin.right
+const width = 1200 - margin.left - margin.right
 const height = 600 - margin.top - margin.bottom
 
 // Creates sources <svg> element
@@ -38,7 +38,7 @@ d3.json(
 
 function update(new_data) {
 	//update the scales
-	xscale.domain([0, d3.max(new_data.artists.artist, d => d.playcount)])
+	xscale.domain([0, d3.max(new_data.artists.artist, d => +d.playcount)])
 	yscale.domain(new_data.artists.artist.map(d => d.name))
 	//render the axis
 	g_xaxis.call(xaxis)
