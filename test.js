@@ -12,9 +12,6 @@ const svg = d3
 // Group used to enforce margin
 const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`)
 
-// Global variable for all data
-let data
-
 // Scales setup
 const xscale = d3.scaleLinear().range([0, width])
 const yscale = d3.scaleBand().rangeRound([0, height]).paddingInner(0.1)
@@ -31,19 +28,20 @@ const g_yaxis = g.append('g').attr('class', 'y axis')
 d3.json(
 	'http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&limit=10&api_key=05064fdc55f8c3320ca9ed2c12ae1fa4&artist?&format=json'
 ).then(json => {
-	data = json
+	data = json.artists.artist
 
 	update(data)
 })
 
-function update(new_data) {
+function update() {
 	//update the scales
-	new_data.artists.artist.sort(function (a, b) {
+	data.sort(function (a, b) {
 		return b.playcount - a.playcount
 	})
+	console.log(data.map(d => d.playcount))
 
-	xscale.domain([0, d3.max(new_data.artists.artist, d => +d.playcount)])
-	yscale.domain(new_data.artists.artist.map(d => d.name))
+	xscale.domain([0, d3.max(data, d => +d.playcount)])
+	yscale.domain(data.map(d => d.name))
 	//render the axis
 	g_xaxis.call(xaxis)
 	g_yaxis.call(yaxis)
@@ -53,7 +51,7 @@ function update(new_data) {
 	// DATA JOIN use the key argument for ensurign that the same DOM element is bound to the same data-item
 	const rect = g
 		.selectAll('rect')
-		.data(new_data.artists.artist, d => d.name)
+		.data(data, d => d.name)
 		.join(
 			// ENTER
 			// new elements
@@ -79,15 +77,17 @@ function update(new_data) {
 	rect.select('title').text(d => d.name)
 }
 
-//interactivity
 d3.select('#filter-us-only').on('change', function () {
 	// This will be triggered when the user selects or unselects the checkbox
 	const checked = d3.select(this).property('checked')
+
 	if (checked === true) {
 		// Checkbox was just checked
 
 		// Keep only data element whose country is US
-		const filtered_data = data.filter(d => d.listeners)
+		const filtered_data = xscale.domain([0, d3.max(data, d => +d.listeners)])
+
+		console.log(filtered_data)
 
 		update(filtered_data) // Update the chart with the filtered data
 	} else {

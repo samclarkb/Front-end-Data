@@ -5,6 +5,11 @@ body {
 	color: white;
 	background-color: black;
 }
+
+h1 {
+	color: orange;
+}
+
 rect {
 	fill: orange;
 	fill-opacity: 0.8;
