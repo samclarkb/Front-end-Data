@@ -67,13 +67,18 @@ function update() {
 			// elements that aren't associated with data
 			exit => exit.remove()
 		)
+	rect.attr('height', yscale.bandwidth())
+		.attr('y', d => yscale(d.name))
+		.transition()
+		.duration(800)
+		.ease(d3.easePoly)
+		.delay((d, i) => {
+			return i * 150
+		})
+		.attr('width', d => xscale(d.playcount))
 
 	// ENTER + UPDATE
 	// both old and new elements
-	rect.attr('height', yscale.bandwidth())
-		.attr('width', d => xscale(d.playcount))
-		.attr('y', d => yscale(d.name))
-
 	rect.select('title').text(d => d.name)
 }
 
