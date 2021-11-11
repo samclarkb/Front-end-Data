@@ -131,15 +131,22 @@ function filtered_data(data) {
 		.attr('width', d => xscale(d.listeners))
 }
 
-d3.select('#filter-us-only').on('change', function () {
+d3.select('#listeners').on('change', function () {
 	// This will be triggered when the user selects or unselects the checkbox
 	const checked = d3.select(this).property('checked')
 	if (checked === true) {
-		// Checkbox was just checked
-
-		// Keep only data element whose country is US
-
 		filtered_data(data) // Update the chart with the filtered data
+	} else {
+		// Checkbox was just unchecked
+		update(data) // Update the chart with all the data we have
+	}
+})
+
+d3.select('#streams').on('change', function () {
+	// This will be triggered when the user selects or unselects the checkbox
+	const checked = d3.select(this).property('checked')
+	if (checked === true) {
+		update(data) // Update the chart with the filtered data
 	} else {
 		// Checkbox was just unchecked
 		update(data) // Update the chart with all the data we have
