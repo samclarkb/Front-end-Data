@@ -38,13 +38,13 @@ function update() {
 	data.sort(function (a, b) {
 		return b.playcount - a.playcount
 	})
-	console.log(data.map(d => d.playcount))
+	// console.log(data.map(d => d.playcount))
 
 	xscale.domain([0, d3.max(data, d => +d.playcount)])
 	yscale.domain(data.map(d => d.name))
 	//render the axis
-	g_xaxis.call(xaxis)
-	g_yaxis.call(yaxis)
+	g_xaxis.transition().duration(800).ease(d3.easePoly).call(xaxis)
+	g_yaxis.transition().duration(800).ease(d3.easePoly).call(yaxis)
 
 	// Render the chart with new data
 
@@ -67,14 +67,16 @@ function update() {
 			// elements that aren't associated with data
 			exit => exit.remove()
 		)
+
 	rect.attr('height', yscale.bandwidth())
-		.attr('y', d => yscale(d.name))
+		// transitie
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
-		.delay((d, i) => {
-			return i * 150
-		})
+		.attr('y', d => yscale(d.name))
+		// .delay((d, i) => {
+		// 	return i * 200
+		// })
 		.attr('width', d => xscale(d.playcount))
 
 	// ENTER + UPDATE
@@ -82,19 +84,62 @@ function update() {
 	rect.select('title').text(d => d.name)
 }
 
+function filtered_data(data) {
+	//update the scales
+	data.sort(function (a, b) {
+		return b.listeners - a.listeners
+	})
+	// console.log(data.map(d => d.playcount))
+
+	xscale.domain([0, d3.max(data, d => +d.listeners)])
+	yscale.domain(data.map(d => d.name))
+	//render the axis
+	g_xaxis.transition().duration(800).ease(d3.easePoly).call(xaxis)
+	g_yaxis.transition().duration(800).ease(d3.easePoly).call(yaxis)
+
+	// Render the chart with new data
+
+	// DATA JOIN use the key argument for ensurign that the same DOM element is bound to the same data-item
+	const rect = g
+		.selectAll('rect')
+		.data(data, d => d.name)
+		.join(
+			// ENTER
+			// new elements
+			enter => {
+				const rect_enter = enter.append('rect').attr('x', 0)
+				rect_enter.append('title')
+				return rect_enter
+			},
+			// UPDATE
+			// update existing elements
+			update => update,
+			// EXIT
+			// elements that aren't associated with data
+			exit => exit.remove()
+		)
+
+	rect.attr('height', yscale.bandwidth())
+		// transitie
+		.transition()
+		.duration(800)
+		.ease(d3.easePoly)
+		.attr('y', d => yscale(d.name))
+		// .delay((d, i) => {
+		// 	return i * 200
+		// })
+		.attr('width', d => xscale(d.listeners))
+}
+
 d3.select('#filter-us-only').on('change', function () {
 	// This will be triggered when the user selects or unselects the checkbox
 	const checked = d3.select(this).property('checked')
-
 	if (checked === true) {
 		// Checkbox was just checked
 
 		// Keep only data element whose country is US
-		const filtered_data = xscale.domain([0, d3.max(data, d => +d.listeners)])
 
-		console.log(filtered_data)
-
-		update(filtered_data) // Update the chart with the filtered data
+		filtered_data(data) // Update the chart with the filtered data
 	} else {
 		// Checkbox was just unchecked
 		update(data) // Update the chart with all the data we have
