@@ -10,16 +10,27 @@
 	</head>
 	<body>
 		<h1>Bar chart</h1>
-		<div>
+		<div class="hidden" id="tooltip">
+			<p>Waarde</p>
+			<p id="value"></p>
+		</div>
+		<div class="radio">
 			<label
-				><input type="radio" name="US" value="1" id="listeners" />Totaal Aantal Luisteraars
+				><input
+					type="radio"
+					name="chart"
+					value="streams"
+					id="filter"
+					checked="checked"
+				/>Totaal Aantal Streams
 			</label>
 			<label
-				><input type="radio" name="US" value="2" id="streams" />Totaal Aantal Streams
+				><input type="radio" name="chart" value="listeners" id="filter" />Totaal Aantal
+				Luisteraars
 			</label>
 			<label
-				><input type="radio" name="US" value="2" id="average" />Gemiddeld Aantal Streams Per
-				Luisteraar
+				><input type="radio" name="chart" value="average" id="filter" />Gemiddeld Aantal
+				Streams Per Luisteraar
 			</label>
 		</div>
 		<script src="./test.js"></script>

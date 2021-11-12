@@ -69,7 +69,8 @@ function update() {
 		)
 
 	rect.attr('height', yscale.bandwidth())
-		// transitie
+		.on('mouseover', onMouseOver)
+		.on('mouseout', onMouseOut)
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
@@ -121,6 +122,8 @@ function filtered_data(data) {
 
 	rect.attr('height', yscale.bandwidth())
 		// transitie
+		.on('mouseover', onMouseOver)
+		.on('mouseout', onMouseOut)
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
@@ -131,24 +134,79 @@ function filtered_data(data) {
 		.attr('width', d => xscale(d.listeners))
 }
 
-d3.select('#listeners').on('change', function () {
-	// This will be triggered when the user selects or unselects the checkbox
-	const checked = d3.select(this).property('checked')
-	if (checked === true) {
-		filtered_data(data) // Update the chart with the filtered data
-	} else {
-		// Checkbox was just unchecked
-		update(data) // Update the chart with all the data we have
-	}
-})
+function average(data) {
+	//update the scales
+	data.sort(function (a, b) {
+		return b.playcount / b.listeners - a.playcount / a.listeners
+	})
+	// console.log(data.map(d => d.playcount))
 
-d3.select('#streams').on('change', function () {
-	// This will be triggered when the user selects or unselects the checkbox
+	xscale.domain([0, d3.max(data, d => +d.playcount / d.listeners)])
+	yscale.domain(data.map(d => d.name))
+	//render the axis
+	g_xaxis.transition().duration(800).ease(d3.easePoly).call(xaxis)
+	g_yaxis.transition().duration(800).ease(d3.easePoly).call(yaxis)
+
+	// Render the chart with new data
+
+	// DATA JOIN use the key argument for ensurign that the same DOM element is bound to the same data-item
+	const rect = g
+		.selectAll('rect')
+		.data(data, d => d.name)
+		.join(
+			// ENTER
+			// new elements
+			enter => {
+				const rect_enter = enter.append('rect').attr('x', 0)
+				rect_enter.append('title')
+				return rect_enter
+			},
+			// UPDATE
+			// update existing elements
+			update => update,
+			// EXIT
+			// elements that aren't associated with data
+			exit => exit.remove()
+		)
+
+	rect.attr('height', yscale.bandwidth())
+		// transitie
+		.on('mouseover', onMouseOver)
+		.on('mouseout', onMouseOut)
+		.transition()
+		.duration(800)
+		.ease(d3.easePoly)
+		.attr('y', d => yscale(d.name))
+		// .delay((d, i) => {
+		// 	return i * 200
+		// })
+		.attr('width', d => xscale(d.playcount / d.listeners))
+}
+
+function onMouseOver(d, i) {
+	d3.select(this).attr('class', 'highlight')
+	d3.select('#tooltip').select('#value').text(i.value)
+	d3.select('#tooltip').classed('hidden', false)
+}
+
+function onMouseOut(d, i) {
+	d3.select(this).attr('class', 'bar')
+	d3.select('#tooltip').classed('hidden', true)
+}
+
+d3.selectAll('#filter').on('change', function () {
 	const checked = d3.select(this).property('checked')
 	if (checked === true) {
-		update(data) // Update the chart with the filtered data
+		if (d3.select(this).node().value === 'streams') {
+			update(data)
+		}
+		if (d3.select(this).node().value === 'listeners') {
+			filtered_data(data)
+		}
+		if (d3.select(this).node().value === 'average') {
+			average(data)
+		}
 	} else {
-		// Checkbox was just unchecked
-		update(data) // Update the chart with all the data we have
+		update(data)
 	}
 })
