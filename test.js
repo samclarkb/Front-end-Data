@@ -1,3 +1,4 @@
+// De afmetingen van de gehele grafiek
 const margin = { top: 40, bottom: 10, left: 120, right: 20 }
 const width = 1200 - margin.left - margin.right
 const height = 600 - margin.top - margin.bottom
@@ -34,7 +35,7 @@ d3.json(
 })
 
 function update() {
-	//update the scales
+	//update the scale
 	data.sort(function (a, b) {
 		return b.playcount - a.playcount
 	})
@@ -67,10 +68,13 @@ function update() {
 			// elements that aren't associated with data
 			exit => exit.remove()
 		)
+		.on('mouseover', onMouseOver)
+		.on('mousemove', onMouseOver)
+		.on('mouseout', onMouseOut)
 
 	rect.attr('height', yscale.bandwidth())
-		.on('mouseover', onMouseOver)
-		.on('mouseout', onMouseOut)
+		// .on('mouseover', onMouseOver)
+		// .on('mouseout', onMouseOut)
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
@@ -122,8 +126,8 @@ function filtered_data(data) {
 
 	rect.attr('height', yscale.bandwidth())
 		// transitie
-		.on('mouseover', onMouseOver)
-		.on('mouseout', onMouseOut)
+		// .on('mouseover', onMouseOver)
+		// .on('mouseout', onMouseOut)
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
@@ -171,22 +175,65 @@ function average(data) {
 
 	rect.attr('height', yscale.bandwidth())
 		// transitie
-		.on('mouseover', onMouseOver)
-		.on('mouseout', onMouseOut)
+		// .on('mouseover', onMouseOver)
+		// .on('mouseout', onMouseOut)
+
+		// .on('mouseover', function (d) {
+		// 	.transition().duration(200).style('opacity', 0.9)
+		// 	.text(yscale(d.name) + '<br/>' + xscale(d.playcount / d.listeners))
+		// 		.style('left', d3.event.pageX + 'px')
+		// 		.style('top', d3.event.pageY - 28 + 'px')
+		// })
+		// .on('mouseout', function () {
+		// 	div.transition().duration(500).style('opacity', 0)
+		// })
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
 		.attr('y', d => yscale(d.name))
-		// .delay((d, i) => {
-		// 	return i * 200
-		// })
+		// .on('mouseover', onMouseOver)
+		// .on('mouseout', onMouseOut)
 		.attr('width', d => xscale(d.playcount / d.listeners))
+	// .on('mouseover', function (d) {
+	// 	//Get this bar's x/y values, then augment for the tooltip
+	// 	var xPosition = parseFloat(d3.select(this).attr('x')) + xScale.rangeBand() / 2
+	// 	var yPosition = parseFloat(d3.select(this).attr('y')) + 14
+	// 	console.log(d)
+	// 	//Update the tooltip position and value
+	// 	d3.select('#tooltip')
+	// 		.style('left', xPosition + 'px')
+	// 		.style('top', yPosition + 'px')
+	// 	d3.select('#value').text(d.playcount / d.listeners)
+
+	// 	//Show the tooltip
+	// 	d3.select('#tooltip').classed('hidden', false)
+	// })
+
+	// .on('mouseout', function () {
+	// 	//Remove the tooltip
+	// 	d3.select('#tooltip').remove()
+	// })
 }
 
 function onMouseOver(d, i) {
+	const xPosition = d.clientX
+	const yPosition = d.clientY
+
+	let toolTipValue
+	debugger
+	if (selection === 'average') {
+		toolTipValue = i.playcount / i.listeners
+	} else {
+		toolTipValue = i[selection]
+	}
 	d3.select(this).attr('class', 'highlight')
-	d3.select('#tooltip').select('#value').text(i.value)
+	// d3.select('#tooltip').select('#value').text(i.value)
 	d3.select('#tooltip').classed('hidden', false)
+	d3.select('#tooltip')
+		.style('left', xPosition + 'px')
+		.style('top', yPosition + 'px')
+	d3.select('#value').text(Math.round(toolTipValue))
+	d3.select('#name').text(i.name)
 }
 
 function onMouseOut(d, i) {
@@ -194,16 +241,20 @@ function onMouseOut(d, i) {
 	d3.select('#tooltip').classed('hidden', true)
 }
 
+let selection = 'playcount'
 d3.selectAll('#filter').on('change', function () {
 	const checked = d3.select(this).property('checked')
 	if (checked === true) {
 		if (d3.select(this).node().value === 'streams') {
+			selection = 'playcount'
 			update(data)
 		}
 		if (d3.select(this).node().value === 'listeners') {
+			selection = 'listeners'
 			filtered_data(data)
 		}
 		if (d3.select(this).node().value === 'average') {
+			selection = 'average'
 			average(data)
 		}
 	} else {
