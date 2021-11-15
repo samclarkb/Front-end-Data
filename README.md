@@ -12,6 +12,10 @@
 ## :books: assignment 
 Create a data visualisation (using the d3 library) based on given data where data can be explored through interaction using enter(), update(), and exit().
 
+**Rubric:** 
+
+<img width="803" alt="eind verise" src="https://github.com/samclarkb/Frontend-Data/blob/main/images/rubric.png">
+
 ## :bulb: Concept
 
 <img width="803" alt="eind verise" src="https://github.com/samclarkb/Frontend-Data/blob/main/images/eindVersie.png">
