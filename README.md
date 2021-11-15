@@ -43,4 +43,4 @@ If you want to use this code, you can clone my repository with the following com
 - https://observablehq.com/@d3/learn-d3?collection=@d3/learn-d3
 
 ## :bookmark: License 
-Copyright (c) 2021 Sam Clark Boot, [MIT](https://github.com/samclarkb/Frontend-Data#bookmark-license)
+Copyright (c) 2021 Sam Clark Boot, [MIT](https://github.com/samclarkb/Frontend-Data/blob/main/LICENSE)
