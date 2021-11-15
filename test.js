@@ -31,10 +31,10 @@ d3.json(
 ).then(json => {
 	data = json.artists.artist
 
-	update(data)
+	streams(data)
 })
 
-function update() {
+function streams() {
 	//update the scale
 	data.sort(function (a, b) {
 		return b.playcount - a.playcount
@@ -68,8 +68,9 @@ function update() {
 			// elements that aren't associated with data
 			exit => exit.remove()
 		)
+		// aanroepen van de mouse events
 		.on('mouseover', onMouseOver)
-		.on('mousemove', onMouseOver)
+		.on('mousemove', onMouseOver) // Mousemove
 		.on('mouseout', onMouseOut)
 
 	rect.attr('height', yscale.bandwidth())
@@ -89,7 +90,7 @@ function update() {
 	rect.select('title').text(d => d.name)
 }
 
-function filtered_data(data) {
+function listeners(data) {
 	//update the scales
 	data.sort(function (a, b) {
 		return b.listeners - a.listeners
@@ -175,68 +176,37 @@ function average(data) {
 
 	rect.attr('height', yscale.bandwidth())
 		// transitie
-		// .on('mouseover', onMouseOver)
-		// .on('mouseout', onMouseOut)
-
-		// .on('mouseover', function (d) {
-		// 	.transition().duration(200).style('opacity', 0.9)
-		// 	.text(yscale(d.name) + '<br/>' + xscale(d.playcount / d.listeners))
-		// 		.style('left', d3.event.pageX + 'px')
-		// 		.style('top', d3.event.pageY - 28 + 'px')
-		// })
-		// .on('mouseout', function () {
-		// 	div.transition().duration(500).style('opacity', 0)
-		// })
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
 		.attr('y', d => yscale(d.name))
-		// .on('mouseover', onMouseOver)
-		// .on('mouseout', onMouseOut)
+
 		.attr('width', d => xscale(d.playcount / d.listeners))
-	// .on('mouseover', function (d) {
-	// 	//Get this bar's x/y values, then augment for the tooltip
-	// 	var xPosition = parseFloat(d3.select(this).attr('x')) + xScale.rangeBand() / 2
-	// 	var yPosition = parseFloat(d3.select(this).attr('y')) + 14
-	// 	console.log(d)
-	// 	//Update the tooltip position and value
-	// 	d3.select('#tooltip')
-	// 		.style('left', xPosition + 'px')
-	// 		.style('top', yPosition + 'px')
-	// 	d3.select('#value').text(d.playcount / d.listeners)
-
-	// 	//Show the tooltip
-	// 	d3.select('#tooltip').classed('hidden', false)
-	// })
-
-	// .on('mouseout', function () {
-	// 	//Remove the tooltip
-	// 	d3.select('#tooltip').remove()
-	// })
 }
 
-function onMouseOver(d, i) {
+function onMouseOver(d, data) {
+	// positie van mijn muis
 	const xPosition = d.clientX
 	const yPosition = d.clientY
 
 	let toolTipValue
-	debugger
+
 	if (selection === 'average') {
-		toolTipValue = i.playcount / i.listeners
+		toolTipValue = data.playcount / data.listeners
 	} else {
-		toolTipValue = i[selection]
+		toolTipValue = data[selection]
 	}
+
 	d3.select(this).attr('class', 'highlight')
-	// d3.select('#tooltip').select('#value').text(i.value)
 	d3.select('#tooltip').classed('hidden', false)
 	d3.select('#tooltip')
 		.style('left', xPosition + 'px')
 		.style('top', yPosition + 'px')
-	d3.select('#value').text(Math.round(toolTipValue))
-	d3.select('#name').text(i.name)
+	d3.select('#name').text(`${data.name} heeft `)
+	d3.select('#value').text(`${Math.round(toolTipValue)} aantal streams `)
 }
 
-function onMouseOut(d, i) {
+function onMouseOut() {
 	d3.select(this).attr('class', 'bar')
 	d3.select('#tooltip').classed('hidden', true)
 }
@@ -247,11 +217,11 @@ d3.selectAll('#filter').on('change', function () {
 	if (checked === true) {
 		if (d3.select(this).node().value === 'streams') {
 			selection = 'playcount'
-			update(data)
+			streams(data)
 		}
 		if (d3.select(this).node().value === 'listeners') {
 			selection = 'listeners'
-			filtered_data(data)
+			listeners(data)
 		}
 		if (d3.select(this).node().value === 'average') {
 			selection = 'average'
