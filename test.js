@@ -70,24 +70,16 @@ function streams() {
 		)
 		// aanroepen van de mouse events
 		.on('mouseover', onMouseOver)
-		.on('mousemove', onMouseOver) // Mousemove
+		.on('mousemove', onMouseOver) // Mousemove returnt constant de coördinaten van de muis
 		.on('mouseout', onMouseOut)
 
 	rect.attr('height', yscale.bandwidth())
-		// .on('mouseover', onMouseOver)
-		// .on('mouseout', onMouseOut)
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
 		.attr('y', d => yscale(d.name))
-		// .delay((d, i) => {
-		// 	return i * 200
-		// })
-		.attr('width', d => xscale(d.playcount))
 
-	// ENTER + UPDATE
-	// both old and new elements
-	rect.select('title').text(d => d.name)
+		.attr('width', d => xscale(d.playcount))
 }
 
 function listeners(data) {
@@ -127,15 +119,10 @@ function listeners(data) {
 
 	rect.attr('height', yscale.bandwidth())
 		// transitie
-		// .on('mouseover', onMouseOver)
-		// .on('mouseout', onMouseOut)
 		.transition()
 		.duration(800)
 		.ease(d3.easePoly)
 		.attr('y', d => yscale(d.name))
-		// .delay((d, i) => {
-		// 	return i * 200
-		// })
 		.attr('width', d => xscale(d.listeners))
 }
 
