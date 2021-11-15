@@ -10,8 +10,11 @@
 * [License](https://github.com/samclarkb/Frontend-Data#bookmark-license)
 
 ## :books: assignment 
+Create a data visualisation (using the d3 library) based on given data where data can be explored through interaction using enter(), update(), and exit().
 
 ## :bulb: Concept
+
+<img width="803" alt="eind verise" src="https://github.com/samclarkb/Frontend-Data/blob/main/images/eindVersie.png">
 
 ## :memo: Wishlist
 There are a few things I didn't get done due to lack of time:
