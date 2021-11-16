@@ -32,7 +32,7 @@ When the user hover over a rectangle, the browser will tel the user what the exa
 ## :memo: Wishlist
 There are a few things I didn't get done due to lack of time:
 * Putting indiviual functions in modules
-* 
+* Diving deeper into switch statement within Javascript
 
 ## :wrench: Installation
 If you want to use this code, you can clone my repository with the following command:
