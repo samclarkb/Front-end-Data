@@ -23,7 +23,6 @@ const g_xaxis = g.append('g').attr('class', 'x axis')
 const yaxis = d3.axisLeft().scale(yscale)
 const g_yaxis = g.append('g').attr('class', 'y axis')
 
-/////////////////////////
 // TODO use animated transtion between filtering changes
 
 d3.json(
@@ -31,23 +30,29 @@ d3.json(
 ).then(json => {
 	data = json.artists.artist
 
-	streams(data)
+	update(data)
 })
 
-function streams() {
-	//update the scale
-	data.sort(function (a, b) {
-		return b.playcount - a.playcount
-	})
-	// console.log(data.map(d => d.playcount))
+function update(data, type) {
+	sorteren(data, type)
 
-	xscale.domain([0, d3.max(data, d => +d.playcount)])
+	if (type === 'playcount') {
+		xscale.domain([0, d3.max(data, d => +d.playcount)])
+	}
+	if (type === 'listeners') {
+		xscale.domain([0, d3.max(data, d => +d.listeners)])
+	}
+	if (type === 'average') {
+		xscale.domain([0, d3.max(data, d => +d.playcount / d.listeners)])
+	} else {
+		xscale.domain([0, d3.max(data, d => +d.playcount)])
+	}
+
 	yscale.domain(data.map(d => d.name))
+	// xscale.domain([0, d3.max(data, d => +d.playcount)])
 	//render the axis
 	g_xaxis.transition().duration(800).ease(d3.easePoly).call(xaxis)
 	g_yaxis.transition().duration(800).ease(d3.easePoly).call(yaxis)
-
-	// Render the chart with new data
 
 	// DATA JOIN use the key argument for ensurign that the same DOM element is bound to the same data-item
 	const rect = g
@@ -78,97 +83,35 @@ function streams() {
 		.duration(800)
 		.ease(d3.easePoly)
 		.attr('y', d => yscale(d.name))
+	// .attr('width', d => xscale(d.playcount))
 
-		.attr('width', d => xscale(d.playcount))
+	if (type === 'playcount') {
+		rect.attr('width', d => xscale(d.playcount))
+	}
+	if (type === 'listeners') {
+		rect.attr('width', d => xscale(d.listeners))
+	}
+	if (type === 'average') {
+		rect.attr('width', d => xscale(d.playcount / d.listeners))
+	} else {
+		rect.attr('width', d => xscale(d.playcount))
+	}
 }
 
-function listeners(data) {
-	//update the scales
+sorteren = (data, type) => {
 	data.sort(function (a, b) {
-		return b.listeners - a.listeners
+		if (type === 'playcount') {
+			return b.playcount - a.playcount
+		}
+		if (type === 'listeners') {
+			return b.listeners - a.listeners
+		}
+		if (type === 'average') {
+			return b.playcount / b.listeners - a.playcount / a.listeners
+		} else {
+			return b.playcount - a.playcount
+		}
 	})
-	// console.log(data.map(d => d.playcount))
-
-	xscale.domain([0, d3.max(data, d => +d.listeners)])
-	yscale.domain(data.map(d => d.name))
-	//render the axis
-	g_xaxis.transition().duration(800).ease(d3.easePoly).call(xaxis)
-	g_yaxis.transition().duration(800).ease(d3.easePoly).call(yaxis)
-
-	// Render the chart with new data
-
-	// DATA JOIN use the key argument for ensurign that the same DOM element is bound to the same data-item
-	const rect = g
-		.selectAll('rect')
-		.data(data, d => d.name)
-		.join(
-			// ENTER
-			// new elements
-			enter => {
-				const rect_enter = enter.append('rect').attr('x', 0)
-				rect_enter.append('title')
-				return rect_enter
-			},
-			// UPDATE
-			// update existing elements
-			update => update,
-			// EXIT
-			// elements that aren't associated with data
-			exit => exit.remove()
-		)
-
-	rect.attr('height', yscale.bandwidth())
-		// transitie
-		.transition()
-		.duration(800)
-		.ease(d3.easePoly)
-		.attr('y', d => yscale(d.name))
-		.attr('width', d => xscale(d.listeners))
-}
-
-function average(data) {
-	//update the scales
-	data.sort(function (a, b) {
-		return b.playcount / b.listeners - a.playcount / a.listeners
-	})
-	// console.log(data.map(d => d.playcount))
-
-	xscale.domain([0, d3.max(data, d => +d.playcount / d.listeners)])
-	yscale.domain(data.map(d => d.name))
-	//render the axis
-	g_xaxis.transition().duration(800).ease(d3.easePoly).call(xaxis)
-	g_yaxis.transition().duration(800).ease(d3.easePoly).call(yaxis)
-
-	// Render the chart with new data
-
-	// DATA JOIN use the key argument for ensurign that the same DOM element is bound to the same data-item
-	const rect = g
-		.selectAll('rect')
-		.data(data, d => d.name)
-		.join(
-			// ENTER
-			// new elements
-			enter => {
-				const rect_enter = enter.append('rect').attr('x', 0)
-				rect_enter.append('title')
-				return rect_enter
-			},
-			// UPDATE
-			// update existing elements
-			update => update,
-			// EXIT
-			// elements that aren't associated with data
-			exit => exit.remove()
-		)
-
-	rect.attr('height', yscale.bandwidth())
-		// transitie
-		.transition()
-		.duration(800)
-		.ease(d3.easePoly)
-		.attr('y', d => yscale(d.name))
-
-		.attr('width', d => xscale(d.playcount / d.listeners))
 }
 
 function onMouseOver(d, data) {
@@ -212,19 +155,19 @@ let selection = 'playcount'
 d3.selectAll('#filter').on('change', function () {
 	const checked = d3.select(this).property('checked')
 	if (checked === true) {
-		if (d3.select(this).node().value === 'streams') {
+		if (d3.select(this).node().value === 'playcount') {
 			selection = 'playcount'
-			streams(data)
+			update(data, 'playcount')
 		}
 		if (d3.select(this).node().value === 'listeners') {
 			selection = 'listeners'
-			listeners(data)
+			update(data, 'listeners')
 		}
 		if (d3.select(this).node().value === 'average') {
 			selection = 'average'
-			average(data)
+			update(data, 'average')
 		}
 	} else {
-		update(data)
+		update(data, 'playcount')
 	}
 })
