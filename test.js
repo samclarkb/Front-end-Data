@@ -190,7 +190,16 @@ function onMouseOver(d, data) {
 		.style('left', xPosition + 'px')
 		.style('top', yPosition + 'px')
 	d3.select('#name').text(`${data.name} heeft `)
-	d3.select('#value').text(`${Math.round(toolTipValue)} aantal streams `)
+
+	if (selection === 'playcount') {
+		d3.select('#value').text(`${Math.round(toolTipValue)} totaal aantal streams `)
+	}
+	if (selection === 'listeners') {
+		d3.select('#value').text(`${Math.round(toolTipValue)} aantal verschillende luisteraars `)
+	}
+	if (selection === 'average') {
+		d3.select('#value').text(`${Math.round(toolTipValue)} streams gemiddeld per luisteraar`)
+	}
 }
 
 function onMouseOut() {
@@ -199,6 +208,7 @@ function onMouseOut() {
 }
 
 let selection = 'playcount'
+
 d3.selectAll('#filter').on('change', function () {
 	const checked = d3.select(this).property('checked')
 	if (checked === true) {
