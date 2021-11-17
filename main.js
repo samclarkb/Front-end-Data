@@ -35,7 +35,6 @@ d3.json(
 })
 
 function update(data, type) {
-	debugger
 	sorteren(data, type)
 
 	if (type === 'playcount') {
