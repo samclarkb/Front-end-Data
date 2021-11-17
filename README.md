@@ -41,7 +41,9 @@ If you want to use this code, you can clone my repository with the following com
 `git clone https://github.com/samclarkb/Frontend-Data`
 
 ## :mag_right: Recources 
-- https://observablehq.com/@d3/learn-d3?collection=@d3/learn-d3
+- Mick Bostock. (2020, 24 maart). Learn D3: Introduction. Observablehq. Geraadpleegd op 17 november 2021, van https://observablehq.com/@d3/learn-d3?collection=@d3/learn-d3
+- tutorialsteacher. (z.d.). D3.js Tutorial. Geraadpleegd op 17 november 2021, van https://www.tutorialsteacher.com/d3js
+- Academind. (2020, 25 mei). D3.js - A Practical Introduction [Video]. YouTube. https://www.youtube.com/watch?v=TOJ9yjvlapY
 
 ## :bookmark: License 
 Copyright (c) 2021 Sam Clark Boot, [MIT](https://github.com/samclarkb/Frontend-Data/blob/main/LICENSE)
