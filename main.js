@@ -25,7 +25,7 @@ const g_yaxis = g.append('g').attr('class', 'y axis')
 
 // Hier haal ik data uit de externe API
 d3.json(
-	'http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&limit=10&api_key=05064fdc55f8c3320ca9ed2c12ae1fa4&artist?&format=json'
+	'https://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&limit=10&api_key=05064fdc55f8c3320ca9ed2c12ae1fa4&artist?&format=json'
 ).then(json => {
 	data = json.artists.artist // Ik zet artists.artist achter json om het pad van het object te definiëren
 
