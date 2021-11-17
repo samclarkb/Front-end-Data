@@ -9,6 +9,7 @@ body {
 
 h1 {
 	color: white;
+	font-size: 30px;
 }
 
 rect {
@@ -21,13 +22,14 @@ rect {
 	font-size: smaller;
 }
 
+/* Stijling van de pop up waarin de data te zien is (hover state) */
 #tooltip {
 	position: absolute;
 	width: 200px;
 	height: auto;
 	padding: 10px;
 	font-weight: normal;
-	background-color: rgb(140, 211, 170);
+	background-color: rgb(147, 224, 179);
 	-webkit-border-raadius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
@@ -56,17 +58,8 @@ rect {
 }
 
 input[type='radio'] {
-	background-color: #fff;
-	margin: 0;
-	font: inherit;
-	color: currentColor;
-	border: 0.15em solid;
-	border-radius: 50%;
 	margin-right: 5px;
-}
-
-input {
-	margin-left: 20px;
+	cursor: pointer;
 }
 
 .radio label {
