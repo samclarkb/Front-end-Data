@@ -14,13 +14,13 @@ const svg = d3
 const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`)
 
 //
-const xscale = d3.scaleLinear().range([0, width])
-const yscale = d3.scaleBand().rangeRound([0, height]).paddingInner(0.1)
+const xscale = d3.scaleLinear().range([0, width]) // scaleLinear om de gaten tussen de data even groot te houden
+const yscale = d3.scaleBand().rangeRound([0, height]).paddingInner(0.15) // padding tussen de rectangles
 
 // Y en X as
-const xaxis = d3.axisTop().scale(xscale)
+const xaxis = d3.axisTop().scale(xscale) // X as zet ik hier aan de bovenkant van de grafiek
 const g_xaxis = g.append('g').attr('class', 'x axis')
-const yaxis = d3.axisLeft().scale(yscale)
+const yaxis = d3.axisLeft().scale(yscale) // data van de Y as zet ik hier aan de linkerkant van de grafiek
 const g_yaxis = g.append('g').attr('class', 'y axis')
 
 // Hier haal ik data uit de externe API
@@ -56,18 +56,11 @@ function update(data, type) {
 	const rect = g
 		.selectAll('rect')
 		.data(data, d => d.name)
-		.join(
-			enter => {
-				const rect_enter = enter.append('rect').attr('x', 0)
-				rect_enter.append('title')
-				return rect_enter
-			},
-			update => update,
-			exit => exit.remove()
-		)
-		// .transition()
-		// .duration(1000)
-
+		.join(enter => {
+			const rect_enter = enter.append('rect').attr('x', 0)
+			rect_enter.append('title')
+			return rect_enter
+		})
 		// aanroepen van de mouse events
 		.on('mouseover', onMouseOver)
 		.on('mousemove', onMouseOver) // Mousemove returnt constant de coördinaten van de muis
