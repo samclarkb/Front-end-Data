@@ -10,10 +10,9 @@ const svg = d3
 	.attr('width', width + margin.left + margin.right)
 	.attr('height', height + margin.top + margin.bottom)
 
-//
+// Zet SVg op de juiste plek
 const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`)
 
-//
 const xscale = d3.scaleLinear().range([0, width]) // scaleLinear om de gaten tussen de data even groot te houden
 const yscale = d3.scaleBand().rangeRound([0, height]).paddingInner(0.15) // padding tussen de rectangles
 
